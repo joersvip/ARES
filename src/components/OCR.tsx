@@ -3,7 +3,7 @@ import { Topbar } from '../App';
 import { getOCRResults, saveOCRResult, deleteOCRResult } from '../lib/api';
 import Tesseract from 'tesseract.js';
 import * as pdfjsLib from 'pdfjs-dist';
-import { ScanText, FileText, Settings2, Download, Trash2, Loader2, RotateCw, Image as ImageIcon, CheckCircle2, History } from 'lucide-react';
+import { ScanText, FileText, Settings2, Download, Trash2, Loader2, RotateCw, Image as ImageIcon, CheckCircle2, History, Database } from 'lucide-react';
 
 // Configure PDF.js worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -62,7 +62,7 @@ export default function OCR({ currentUser }: { currentUser: any }) {
       if (context) {
         canvas.height = viewport.height;
         canvas.width = viewport.width;
-        await page.render({ canvasContext: context, viewport }).promise;
+        await page.render({ canvasContext: context, viewport, canvas } as any).promise;
         images.push(canvas.toDataURL('image/jpeg'));
       }
     }
@@ -97,7 +97,8 @@ export default function OCR({ currentUser }: { currentUser: any }) {
             setProgressMsg(`Analyzing orientation ${i + 1}/${imageSources.length}...`);
             try {
               const osdResult = await Tesseract.recognize(imgSrc, 'osd');
-              const orientation = osdResult.data.orientation_degrees;
+              const data = osdResult.data as any;
+              const orientation = data.orientation_degrees;
               if (orientation && orientation !== 0) {
                 // Rotate canvas
                 setProgressMsg(`Rotating ${orientation} degrees...`);
@@ -121,11 +122,12 @@ export default function OCR({ currentUser }: { currentUser: any }) {
           allText += result.data.text + '\n\n';
           
           // Construct JSON data (Tables / Lines)
-          const linesData = result.data.lines.map(line => ({
+          const data = result.data as any;
+          const linesData = data.lines ? data.lines.map((line: any) => ({
             text: line.text.trim(),
             confidence: line.confidence,
             bbox: line.bbox
-          }));
+          })) : [];
           
           allData.push({ page: i + 1, lines: linesData });
         } else {

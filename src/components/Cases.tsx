@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Topbar } from '../App';
 import { getCases, getCaseDetails, createCase, updateCase, deleteCase, uploadEvidence, addTimelineNote, getUsers } from '../lib/api';
-import { Plus, Edit2, Trash2, FileText, Image as ImageIcon, Video, File, Download, X, Clock, Upload } from 'lucide-react';
+import { Plus, Edit2, Trash2, FileText, Image as ImageIcon, Video, File, Download, X, Clock, Upload, FolderOpen, Database } from 'lucide-react';
 
 export default function Cases({ currentUser }: { currentUser: any }) {
   const [cases, setCases] = useState<any[]>([]);
@@ -46,7 +46,7 @@ export default function Cases({ currentUser }: { currentUser: any }) {
     }
     setIsFormOpen(false);
     loadCases();
-    if (formData.id === selectedCaseId) loadCaseDetails(selectedCaseId);
+    if (formData.id === selectedCaseId && selectedCaseId) loadCaseDetails(selectedCaseId);
   };
 
   const handleDelete = async (id: string) => {

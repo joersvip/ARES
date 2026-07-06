@@ -136,7 +136,7 @@ async function startServer() {
     else if (file.mimetype.startsWith('audio/')) type = 'audio';
     
     const evidence = await db.insert(caseEvidence).values({
-      caseId: req.params.id,
+      caseId: req.params.id as string,
       name: name || file.originalname,
       type,
       url: `/uploads/${file.filename}`,
@@ -146,7 +146,7 @@ async function startServer() {
     }).returning().then(r => r[0]);
     
     await db.insert(caseTimeline).values({
-      caseId: req.params.id,
+      caseId: req.params.id as string,
       eventType: 'evidence_added',
       description: `Evidence added: ${evidence.name}`,
       createdBy: uploadedBy

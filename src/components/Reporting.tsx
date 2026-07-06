@@ -161,6 +161,7 @@ export default function Reporting({ currentUser }: { currentUser: any }) {
           new ImageRun({
             data: bytes,
             transformation: { width: 150, height: 50 },
+            type: 'png'
           })
         ]
       }));
