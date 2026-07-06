@@ -130,16 +130,17 @@ function Login({ onLogin }: { onLogin: (user: any) => void }) {
 
   const [name, setName] = useState('Agent Smith');
   const [email, setEmail] = useState('smith@agency.gov');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const user = await login(name, email);
+      const user = await login(name, email, password);
       onLogin(user);
     } catch (err) {
-      alert('Login failed');
+      alert('Login failed. Check your credentials.');
     } finally {
       setLoading(false);
     }
@@ -160,8 +161,12 @@ function Login({ onLogin }: { onLogin: (user: any) => void }) {
             <input type="text" required value={name} onChange={e => setName(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-white" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-400 mb-1">Email</label>
-            <input type="email" required value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-white" />
+            <label className="block text-sm font-medium text-slate-400 mb-1">Email / Username</label>
+            <input type="text" required value={email} onChange={e => setEmail(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-white" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-400 mb-1">Password (Optional / Admin)</label>
+            <input type="password" value={password} onChange={e => setPassword(e.target.value)} className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all text-white" />
           </div>
           <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-xl transition-colors mt-6 disabled:opacity-50">
             {loading ? 'Authenticating...' : 'Sign In'}

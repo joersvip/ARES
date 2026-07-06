@@ -28,7 +28,16 @@ async function startServer() {
   // REST API
   
   app.post('/api/login', async (req, res) => {
-    const { name, email } = req.body;
+    const { name, email, password } = req.body;
+    
+    // Admin login check
+    if (email === 'admin' || name === 'admin') {
+      if (password !== 'admin') {
+        res.status(401).json({ error: 'Invalid admin credentials' });
+        return;
+      }
+    }
+    
     if (!name || !email) { res.status(400).json({ error: 'Name and email required' }); return; }
     
     let user = await db.select().from(users).where(eq(users.email, email)).limit(1).then(r => r[0]);

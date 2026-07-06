@@ -2,11 +2,11 @@ import { io, Socket } from 'socket.io-client';
 
 export const API_URL = ''; // Same origin
 
-export async function login(name: string, email: string) {
+export async function login(name: string, email: string, password?: string) {
   const res = await fetch('/api/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email }),
+    body: JSON.stringify({ name, email, password }),
   });
   if (!res.ok) throw new Error('Login failed');
   return res.json();
