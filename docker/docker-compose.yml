@@ -1,0 +1,69 @@
+services:
+  # Relational Database for metrics, alerts, and metadata
+  db:
+    image: postgres:15-alpine
+    container_name: ares-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ares_db
+      POSTGRES_USER: ares_admin
+      POSTGRES_PASSWORD: ares_secret_password_change_me
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ../database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ares_admin -d ares_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Storage layer (MinIO object storage engine or redis caching placeholder)
+  storage:
+    image: minio/minio:latest
+    container_name: ares-storage
+    restart: always
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ares_admin
+      MINIO_ROOT_PASSWORD: ares_storage_secret_password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - storage_data:/data
+
+  # Backend core REST API / engine
+  backend:
+    build:
+      context: ../
+      dockerfile: docker/backend.Dockerfile
+    container_name: ares-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://ares_admin:ares_secret_password_change_me@db:5432/ares_db
+      STORAGE_ENDPOINT: http://storage:9000
+    ports:
+      - "8000:8000"
+
+  # Frontend visual intelligence dashboard
+  frontend:
+    build:
+      context: ../
+      dockerfile: docker/frontend.Dockerfile
+    container_name: ares-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  db_data:
+    driver: local
+  storage_data:
+    driver: local
