@@ -1,6 +1,0 @@
-{
-  "name": "ARES",
-  "description": "ARES: Production-grade modular cyber intelligence platform with structured backend, frontend, android, database, docker, storage, models, plugins, and docs directories.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

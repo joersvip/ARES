@@ -1,0 +1,103 @@
+version: '3.8'
+
+services:
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    depends_on:
+      - fastapi
+      - react
+      - flutter-web
+    # volumes:
+    #   - ./nginx.conf:/etc/nginx/nginx.conf:ro
+
+  # React Frontend
+  react:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./react-app:/app
+    command: sh -c "npm install && npm start"
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+
+  # Flutter Web Frontend
+  flutter-web:
+    image: cirrusci/flutter:stable
+    working_dir: /app
+    volumes:
+      - ./flutter-app:/app
+    command: sh -c "flutter pub get && flutter run -d web-server --web-hostname=0.0.0.0 --web-port=8080"
+    ports:
+      - "8080:8080"
+
+  # FastAPI Backend
+  fastapi:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./fastapi-app:/app
+    command: sh -c "pip install -r requirements.txt && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+      - minio
+      - ollama
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/main_db
+      - REDIS_URL=redis://redis:6379/0
+      - MINIO_URL=http://minio:9000
+      - OLLAMA_URL=http://ollama:11434
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: main_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis Cache & Message Broker
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  # MinIO Object Storage (S3 Compatible)
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
+  # Ollama (Local LLM Server)
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+  ollama_data:

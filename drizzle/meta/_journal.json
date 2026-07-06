@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1783305020091,
+      "tag": "0000_nifty_exiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783305278569,
+      "tag": "0001_neat_red_wolf",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1783305462982,
+      "tag": "0002_fantastic_master_chief",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783305690639,
+      "tag": "0003_dazzling_matthew_murdock",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783305921898,
+      "tag": "0004_puzzling_lockheed",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1783306166216,
+      "tag": "0005_right_romulus",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1783306433238,
+      "tag": "0006_sad_the_hunter",
+      "breakpoints": true
+    }
+  ]
+}
